@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smooth Vibes Smoothie Bar</title>
+  <meta name="description" content="Smooth Vibes Smoothie Bar — fresh, fast, customizable smoothies with an AI concierge to help you pick the perfect blend." />
+  <meta property="og:title" content="Smooth Vibes Smoothie Bar" />
+  <meta property="og:description" content="Blend your day with Smooth Vibes. Build a smoothie, spin for recommendations, and chat with our AI concierge." />
+  <style>
+    :root{
+      --bg: #070A0F;
+      --panel: rgba(255,255,255,0.06);
+      --panel2: rgba(255,255,255,0.10);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.68);
+      --muted2: rgba(255,255,255,0.52);
+      --border: rgba(255,255,255,0.14);
+      --brand: #7CFFB2;
+      --brand2:#66D6FF;
+      --warn:#FFD166;
+      --danger:#FF5C7A;
+      --shadow: 0 20px 60px rgba(0,0,0,0.55);
+      --radius: 20px;
+      --radius2: 28px;
+      --max: 1150px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 900px at 20% -10%, rgba(124,255,178,0.10), transparent 55%),
+        radial-gradient(1000px 800px at 110% 20%, rgba(102,214,255,0.12), transparent 55%),
+        radial-gradient(900px 700px at 40% 120%, rgba(255,209,102,0.10), transparent 55%),
+        var(--bg);
+      overflow-x:hidden;
+    }
+    a{ color:inherit; text-decoration:none; }
+    button{ font-family:inherit; }
+
+    /* Layout */
+    .container{ width:min(var(--max), calc(100% - 40px)); margin:0 auto; }
+    .pill{
+      display:inline-flex; align-items:center; gap:10px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,0.04);
+      padding:10px 14px;
+      border-radius:999px;
+      color: var(--muted);
+      backdrop-filter: blur(10px);
+    }
+    .pill b{ color: var(--text); }
+    .btn{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      padding:12px 16px;
+      border-radius: 14px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      cursor:pointer;
+      transition: transform .15s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,0.24); background: rgba(255,255,255,0.09); }
+    .btn:active{ transform: translateY(0px); }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(124,255,178,0.22), rgba(102,214,255,0.18));
+      border-color: rgba(124,255,178,0.35);
+    }
+    .btn.primary:hover{ border-color: rgba(124,255,178,0.55); }
+    .btn.danger{ border-color: rgba(255,92,122,0.45); }
+    .btn.small{ padding:9px 12px; border-radius: 12px; font-size: 14px; }
+    .kbd{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: rgba(255,255,255,0.70);
+      border:1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      padding:4px 8px;
+      border-radius: 10px;
+    }
+
+    /* Header */
+    header{
+      position:sticky; top:0; z-index:50;
+      background: rgba(7,10,15,0.62);
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(16px);
+    }
+    .nav{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 0;
+      gap:16px;
+    }
+    .logo{
+      display:flex; align-items:center; gap:12px;
+      font-weight:800; letter-spacing:.2px;
+    }
+    .mark{
+      width:36px; height:36px; border-radius: 12px;
+      background: radial-gradient(circle at 30% 30%, rgba(124,255,178,0.9), rgba(102,214,255,0.5));
+      box-shadow: 0 10px 25px rgba(124,255,178,0.15);
+    }
+    .navlinks{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+    .navlinks a{
+      color: var(--muted);
+      padding:10px 10px;
+      border-radius: 12px;
+      transition: background .2s ease, color .2s ease;
+    }
+    .navlinks a:hover{ color: var(--text); background: rgba(255,255,255,0.06); }
+    .navactions{ display:flex; gap:10px; align-items:center; }
+
+    /* Hero */
+    .hero{
+      position:relative;
+      padding: 44px 0 28px;
+    }
+    .heroGrid{
+      display:grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+    @media (max-width: 950px){
+      .heroGrid{ grid-template-columns: 1fr; }
+    }
+    .heroCard{
+      position:relative;
+      border:1px solid var(--border);
+      border-radius: var(--radius2);
+      overflow:hidden;
+      background: rgba(255,255,255,0.04);
+      box-shadow: var(--shadow);
+      min-height: 420px;
+    }
+    .heroVideo{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit:cover;
+      filter: saturate(1.2) contrast(1.05) brightness(0.9);
+      transform: scale(1.02);
+    }
+    .heroOverlay{
+      position:absolute; inset:0;
+      background:
+        linear-gradient(180deg, rgba(7,10,15,0.25), rgba(7,10,15,0.82)),
+        radial-gradient(800px 520px at 30% 25%, rgba(124,255,178,0.18), transparent 60%),
+        radial-gradient(700px 520px at 90% 20%, rgba(102,214,255,0.18), transparent 60%);
+    }
+    .heroContent{
+      position:relative;
+      padding: 26px 26px 22px;
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-end;
+      height:100%;
+      gap:14px;
+    }
+    .hTitle{
+      font-size: clamp(28px, 3vw, 44px);
+      line-height:1.05;
+      letter-spacing: -0.6px;
+      margin:0;
+    }
+    .hSub{
+      margin:0;
+      color: var(--muted);
+      max-width: 54ch;
+      font-size: 16px;
+      line-height: 1.45;
+    }
+    .heroBadges{ display:flex; gap:10px; flex-wrap:wrap; }
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.78);
+      font-size: 13px;
+    }
+    .dot{
+      width:8px; height:8px; border-radius:99px;
+      background: var(--brand);
+      box-shadow: 0 0 0 6px rgba(124,255,178,0.12);
+    }
+    .heroCtas{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+
+    /* Side panel */
+    .sideCard{
+      border:1px solid var(--border);
+      border-radius: var(--radius2);
+      background: rgba(255,255,255,0.04);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      min-height: 420px;
+    }
+    .sideTop{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+    .sideTop h3{ margin:0; font-size: 18px; letter-spacing:-0.2px; }
+    .sideTop p{ margin:6px 0 0; color: var(--muted); font-size: 14px; line-height: 1.35; }
+    .statRow{ display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; }
+    .stat{
+      border:1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 12px;
+      min-height: 78px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+    .stat .k{ color: var(--muted2); font-size: 12px; }
+    .stat .v{ font-size: 16px; font-weight: 800; letter-spacing: -0.3px; }
+    .stat .s{ color: var(--muted); font-size: 12px; }
+
+    /* Sections */
+    section{ padding: 20px 0 0; }
+    .sectionTitle{
+      display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
+      margin: 22px 0 12px;
+    }
+    .sectionTitle h2{
+      margin:0;
+      font-size: 22px;
+      letter-spacing: -0.3px;
+    }
+    .sectionTitle p{
+      margin:0;
+      color: var(--muted);
+      font-size: 14px;
+      max-width: 60ch;
+    }
+    .grid3{ display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; }
+    @media (max-width: 980px){ .grid3{ grid-template-columns: 1fr; } }
+
+    .card{
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+    }
+    .card h3{ margin:0 0 8px; font-size: 16px; letter-spacing:-0.2px; }
+    .card p{ margin:0; color: var(--muted); font-size: 14px; line-height:1.45; }
+
+    /* Menu cards */
+    .menuGrid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; }
+    @media (max-width: 980px){ .menuGrid{ grid-template-columns: 1fr; } }
+    .menuCard{
+      border:1px solid rgba(255,255,255,0.12);
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
+      border-radius: var(--radius2);
+      overflow:hidden;
+      position:relative;
+    }
+    .menuCard .top{
+      padding: 16px 16px 10px;
+      display:flex; justify-content:space-between; gap:10px; align-items:flex-start;
+    }
+    .menuCard h3{ margin:0; font-size: 16px; letter-spacing:-0.2px; }
+    .price{ font-weight:900; letter-spacing:-0.3px; }
+    .menuCard .meta{ padding: 0 16px 12px; color: var(--muted); font-size: 13px; line-height:1.35; }
+    .tags{ display:flex; flex-wrap:wrap; gap:8px; padding: 0 16px 14px; }
+    .tag{
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.75);
+    }
+    .menuCard .actions{
+      display:flex; gap:10px; padding: 0 16px 16px;
+    }
+    .menuCard .actions .btn{ width:100%; }
+
+    /* Wheel + Concierge */
+    .twoCol{ display:grid; grid-template-columns: 0.95fr 1.05fr; gap:14px; align-items:stretch; }
+    @media (max-width: 980px){ .twoCol{ grid-template-columns: 1fr; } }
+    .wheelWrap{
+      display:flex; flex-direction:column; gap:12px;
+    }
+    canvas{ width:100%; height:auto; border-radius: var(--radius2); border:1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); }
+    .wheelResult{
+      border:1px dashed rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.04);
+      border-radius: var(--radius);
+      padding: 12px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.35;
+    }
+
+    /* Filters */
+    .filters{ display:flex; flex-wrap:wrap; gap:10px; }
+    .chip{
+      border:1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.80);
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .chip[aria-pressed="true"]{
+      border-color: rgba(124,255,178,0.45);
+      background: rgba(124,255,178,0.12);
+    }
+
+    /* Cart drawer */
+    .drawerBackdrop{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,0.55);
+      display:none;
+      z-index:90;
+    }
+    .drawerBackdrop.show{ display:block; }
+    .drawer{
+      position:fixed; top:0; right:0; height:100%;
+      width:min(420px, calc(100% - 40px));
+      background: rgba(10,13,20,0.92);
+      border-left:1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(16px);
+      transform: translateX(110%);
+      transition: transform .22s ease;
+      z-index:100;
+      display:flex; flex-direction:column;
+    }
+    .drawer.show{ transform: translateX(0); }
+    .drawerHeader{
+      padding:16px;
+      border-bottom:1px solid rgba(255,255,255,0.10);
+      display:flex; justify-content:space-between; align-items:center;
+      gap:10px;
+    }
+    .drawerHeader h3{ margin:0; font-size: 16px; letter-spacing:-0.2px; }
+    .drawerBody{ padding: 14px 16px; overflow:auto; flex:1; }
+    .line{
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 12px;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:12px;
+      margin-bottom:10px;
+    }
+    .line .name{ font-weight:800; margin:0 0 6px; }
+    .line .desc{ margin:0; color: var(--muted); font-size: 12px; line-height:1.3; }
+    .qtyRow{ display:flex; gap:8px; align-items:center; margin-top:8px; }
+    .qtyBtn{ width:34px; height:34px; border-radius: 12px; }
+    .drawerFooter{
+      padding: 14px 16px;
+      border-top:1px solid rgba(255,255,255,0.10);
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .totalRow{ display:flex; justify-content:space-between; align-items:center; }
+    .totalRow .k{ color: var(--muted); }
+    .totalRow .v{ font-weight:900; letter-spacing:-0.3px; font-size: 18px; }
+    .note{ color: var(--muted2); font-size: 12px; line-height:1.35; }
+
+    /* Modal */
+    .modalBackdrop{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,0.62);
+      display:none;
+      z-index:200;
+      padding: 20px;
+    }
+    .modalBackdrop.show{ display:flex; align-items:center; justify-content:center; }
+    .modal{
+      width:min(760px, 100%);
+      border:1px solid rgba(255,255,255,0.14);
+      background: rgba(10,13,20,0.92);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .modalHeader{
+      padding: 16px 16px 14px;
+      border-bottom:1px solid rgba(255,255,255,0.10);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+    }
+    .modalHeader h3{ margin:0; font-size: 16px; letter-spacing:-0.2px; }
+    .modalHeader p{ margin:6px 0 0; color: var(--muted); font-size: 13px; line-height:1.35; }
+    .modalBody{ padding: 14px 16px 16px; }
+    .formGrid{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    @media (max-width: 760px){ .formGrid{ grid-template-columns: 1fr; } }
+    .field{
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 12px;
+    }
+    .field label{ display:block; font-size: 12px; color: var(--muted2); margin-bottom:6px; }
+    select, input, textarea{
+      width:100%;
+      padding: 10px 10px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,0.10);
+      background: rgba(0,0,0,0.25);
+      color: var(--text);
+      outline:none;
+    }
+    textarea{ min-height: 86px; resize: vertical; }
+    .builderSummary{
+      margin-top: 12px;
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      border-radius: 18px;
+      padding: 12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .builderSummary .main{ display:flex; flex-direction:column; gap:4px; }
+    .builderSummary .main b{ font-size: 14px; }
+    .builderSummary .main span{ color: var(--muted); font-size: 12px; }
+    .builderSummary .right{ text-align:right; }
+    .builderSummary .right b{ font-size: 18px; }
+    .builderSummary .right span{ display:block; color: var(--muted); font-size: 12px; }
+
+    /* Chat widget */
+    .chatFab{
+      position:fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 300;
+      border-radius: 18px;
+      padding: 12px 14px;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.55);
+    }
+    .chatPanel{
+      position:fixed;
+      right: 18px;
+      bottom: 78px;
+      width: min(380px, calc(100% - 36px));
+      max-height: 68vh;
+      z-index: 301;
+      display:none;
+      border:1px solid rgba(255,255,255,0.14);
+      border-radius: 22px;
+      background: rgba(10,13,20,0.92);
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .chatPanel.show{ display:flex; flex-direction:column; }
+    .chatHeader{
+      padding: 12px 12px 10px;
+      border-bottom:1px solid rgba(255,255,255,0.10);
+      display:flex; justify-content:space-between; align-items:flex-start; gap:10px;
+    }
+    .chatHeader b{ font-size: 14px; }
+    .chatHeader small{ display:block; margin-top:4px; color: var(--muted); }
+    .chatMsgs{
+      padding: 12px;
+      overflow:auto;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      flex:1;
+    }
+    .msg{
+      max-width: 92%;
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      border-radius: 18px;
+      padding: 10px 12px;
+      color: rgba(255,255,255,0.86);
+      font-size: 13px;
+      line-height: 1.35;
+      white-space: pre-wrap;
+    }
+    .msg.me{
+      margin-left:auto;
+      border-color: rgba(102,214,255,0.35);
+      background: rgba(102,214,255,0.10);
+    }
+    .chatInput{
+      padding: 10px;
+      border-top:1px solid rgba(255,255,255,0.10);
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .chatInput input{
+      flex:1;
+      border-radius: 14px;
+    }
+    .suggestRow{
+      display:flex; gap:8px; flex-wrap:wrap;
+      padding: 0 12px 10px;
+    }
+    .suggest{
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.80);
+      cursor:pointer;
+      user-select:none;
+    }
+
+    /* Footer */
+    footer{
+      margin-top: 28px;
+      padding: 26px 0 36px;
+      border-top:1px solid rgba(255,255,255,0.10);
+      color: var(--muted);
+    }
+    .footerGrid{
+      display:grid;
+      grid-template-columns: 1.2fr 0.8fr 1fr;
+      gap: 14px;
+      align-items:start;
+    }
+    @media (max-width: 980px){ .footerGrid{ grid-template-columns: 1fr; } }
+    .footerGrid b{ color: var(--text); }
+    .tiny{ font-size: 12px; color: var(--muted2); line-height:1.4; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <div class="nav">
+        <a class="logo" href="./">
+          <span class="mark" aria-hidden="true"></span>
+          <span>Smooth Vibes</span>
+        </a>
+
+        <nav class="navlinks" aria-label="Primary navigation">
+          <a href="#menu">Menu</a>
+          <a href="#wheel">Flavor Wheel</a>
+          <a href="#builder">Builder</a>
+          <a href="./about.html">Our Story</a>
+        </nav>
+
+        <div class="navactions">
+          <button class="btn small" id="openChatBtn" title="Open AI concierge">
+            💬 Concierge <span class="kbd">C</span>
+          </button>
+          <button class="btn primary small" id="openCartBtn" title="Open cart">
+            🛒 Cart <span class="kbd" id="cartCount">0</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <div class="hero">
+      <div class="container">
+        <div class="heroGrid">
+          <div class="heroCard" aria-label="Hero video and value proposition">
+            <video class="heroVideo" autoplay muted loop playsinline poster="./assets/hero-poster.jpg">
+              <source src="./assets/hero.mp4" type="video/mp4"/>
+            </video>
+            <div class="heroOverlay" aria-hidden="true"></div>
+
+            <div class="heroContent">
+              <div class="pill">
+                <span class="dot" aria-hidden="true"></span>
+                <span><b>Grand Opening Pilot</b> — fast pickup + AI recommendations</span>
+              </div>
+
+              <h1 class="hTitle">Blend your day with <span style="color:var(--brand)">Smooth Vibes</span>.</h1>
+              <p class="hSub">
+                Fresh fruit. Clean ingredients. Student-friendly speed.
+                Use the <b>AI Concierge</b> to find the perfect smoothie based on your goals and dietary needs.
+              </p>
+
+              <div class="heroBadges">
+                <span class="badge">⚡ Ready in ~10 mins</span>
+                <span class="badge">🥛 Dairy-free options</span>
+                <span class="badge">💪 High-protein builds</span>
+                <span class="badge">🧠 Data-grounded AI</span>
+              </div>
+
+              <div class="heroCtas">
+                <a class="btn primary" href="#menu">Order Pickup</a>
+                <button class="btn" id="openBuilderBtn">Build Your Smoothie</button>
+                <a class="btn" href="./about.html">Learn Our Story</a>
+              </div>
+
+              <div class="tiny">
+                Tip: press <span class="kbd">C</span> for Concierge and <span class="kbd">K</span> for Cart.
+              </div>
+            </div>
+          </div>
+
+          <aside class="sideCard" aria-label="Pilot overview">
+            <div class="sideTop">
+              <div>
+                <h3>Pilot-ready experience</h3>
+                <p>
+                  This site includes a full ordering funnel (menu → cart → checkout) plus an AI assistant grounded in our menu + policies.
+                </p>
+              </div>
+              <span class="pill"><b>v1 Pilot</b></span>
+            </div>
+
+            <div class="statRow">
+              <div class="stat">
+                <div class="k">Popular pick</div>
+                <div class="v" id="statPopular">Berry Bolt</div>
+                <div class="s">student favorite</div>
+              </div>
+              <div class="stat">
+                <div class="k">Avg calories</div>
+                <div class="v" id="statCalories">~420</div>
+                <div class="s">menu estimate</div>
+              </div>
+              <div class="stat">
+                <div class="k">Pickup window</div>
+                <div class="v" id="statPickup">10–15</div>
+                <div class="s">minutes</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3>Try the AI Concierge</h3>
+              <p>
+                Tell it your goal (energy, high-protein, low-sugar), taste prefs, and allergies. It recommends real menu items and substitutions.
+              </p>
+              <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+                <button class="btn primary" id="openChatBtn2">Ask the Concierge</button>
+                <button class="btn" id="spinAndRecommendBtn">Spin + Recommend</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3>Join the opening list</h3>
+              <p>Get a coupon + early access to new flavors.</p>
+              <div style="display:flex; gap:10px; margin-top:12px;">
+                <input id="emailSignup" type="email" placeholder="you@school.edu" aria-label="Email address" />
+                <button class="btn small primary" id="emailBtn">Join</button>
+              </div>
+              <div class="tiny" id="emailMsg" style="margin-top:8px;"></div>
+            </div>
+          </aside>
+        </div>
+
+        <!-- VALUE CARDS -->
+        <section>
+          <div class="sectionTitle">
+            <div>
+              <h2>Why Smooth Vibes wins</h2>
+              <p>Designed for speed, customization, and confidence—especially when you’re busy.</p>
+            </div>
+          </div>
+
+          <div class="grid3">
+            <div class="card">
+              <h3>✅ Fast pickup</h3>
+              <p>Order in seconds, pick up between classes. Pilot checkout saves time and reduces lines.</p>
+            </div>
+            <div class="card">
+              <h3>✅ Clear dietary info</h3>
+              <p>Filters for vegan, dairy-free, high-protein, and common allergens—plus substitution suggestions.</p>
+            </div>
+            <div class="card">
+              <h3>✅ AI that’s grounded</h3>
+              <p>The Concierge only recommends items and ingredients we actually offer—built on our menu + policies.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- MENU -->
+        <section id="menu">
+          <div class="sectionTitle">
+            <div>
+              <h2>Menu (Pilot)</h2>
+              <p>Real prices, tags, and nutrition estimates. Add to cart and check out in “pilot mode.”</p>
+            </div>
+            <div class="filters" id="filters"></div>
+          </div>
+
+          <div class="menuGrid" id="menuGrid"></div>
+        </section>
+
+        <!-- WHEEL + CONCIERGE -->
+        <section id="wheel">
+          <div class="sectionTitle">
+            <div>
+              <h2>Spin the Flavor Wheel</h2>
+              <p>Fun entry point that converts: the wheel suggests a real menu item you can add to your cart.</p>
+            </div>
+          </div>
+
+          <div class="twoCol">
+            <div class="wheelWrap">
+              <canvas id="wheelCanvas" width="800" height="520" aria-label="Flavor Wheel"></canvas>
+              <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="btn primary" id="spinBtn">SPIN!</button>
+                <button class="btn" id="spinAgainBtn">Spin Again</button>
+                <button class="btn" id="addWheelPickBtn" disabled>Add Wheel Pick to Cart</button>
+              </div>
+              <div class="wheelResult" id="wheelResult">Spin to get a recommendation.</div>
+            </div>
+
+            <div class="card">
+              <h3>AI Concierge (grounded)</h3>
+              <p>
+                Ask anything about our menu, ingredients, allergies, substitutions, hours, and pickup.
+                The assistant answers using the knowledge base embedded in this site.
+              </p>
+              <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+                <button class="btn primary" id="openChatBtn3">Open Concierge</button>
+                <button class="btn" id="conciergeDemoBtn">Demo: “High protein, dairy-free”</button>
+              </div>
+              <div class="tiny" style="margin-top:10px;">
+                Pilot note: for production, connect this UI to a serverless GenAI endpoint + RAG.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- BUILDER -->
+        <section id="builder">
+          <div class="sectionTitle">
+            <div>
+              <h2>Build your own smoothie</h2>
+              <p>Choose ingredients, see price + nutrition estimate, then add your custom blend to cart.</p>
+            </div>
+            <div>
+              <button class="btn primary" id="openBuilderBtn2">Open Builder</button>
+            </div>
+          </div>
+
+          <div class="grid3">
+            <div class="card">
+              <h3>Step 1: Choose your base</h3>
+              <p>Pick liquid + fruit profile (tropical/berry/greens/chocolate). Keep it simple or go wild.</p>
+            </div>
+            <div class="card">
+              <h3>Step 2: Add boosters</h3>
+              <p>Protein, creatine, greens, fiber, and immunity boosters. (Pilot: limited set.)</p>
+            </div>
+            <div class="card">
+              <h3>Step 3: Name + checkout</h3>
+              <p>Your blend gets a fun name and a clean summary you can submit for pickup.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <!-- CART DRAWER -->
+    <div class="drawerBackdrop" id="drawerBackdrop" aria-hidden="true"></div>
+    <aside class="drawer" id="drawer" aria-label="Cart drawer">
+      <div class="drawerHeader">
+        <h3>🛒 Your Cart</h3>
+        <button class="btn small" id="closeCartBtn">Close</button>
+      </div>
+      <div class="drawerBody" id="cartLines"></div>
+      <div class="drawerFooter">
+        <div class="totalRow">
+          <span class="k">Estimated total</span>
+          <span class="v" id="cartTotal">$0.00</span>
+        </div>
+        <button class="btn primary" id="checkoutBtn">Checkout (Pilot)</button>
+        <div class="note">
+          Pilot checkout collects pickup time + notes. For production: add payment + order confirmations.
+        </div>
+        <button class="btn danger small" id="clearCartBtn">Clear cart</button>
+      </div>
+    </aside>
+
+    <!-- BUILDER MODAL -->
+    <div class="modalBackdrop" id="builderBackdrop" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-label="Build your smoothie">
+        <div class="modalHeader">
+          <div>
+            <h3>Build your smoothie</h3>
+            <p>All prices and macros are estimates for pilot testing.</p>
+          </div>
+          <button class="btn small" id="closeBuilderBtn">Close</button>
+        </div>
+        <div class="modalBody">
+          <div class="formGrid">
+            <div class="field">
+              <label for="sizeSel">Size</label>
+              <select id="sizeSel">
+                <option value="12">12oz</option>
+                <option value="16" selected>16oz</option>
+                <option value="24">24oz</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="liquidSel">Liquid</label>
+              <select id="liquidSel"></select>
+            </div>
+
+            <div class="field">
+              <label for="fruitSel">Fruit profile</label>
+              <select id="fruitSel"></select>
+            </div>
+            <div class="field">
+              <label for="proteinSel">Protein</label>
+              <select id="proteinSel"></select>
+            </div>
+
+            <div class="field">
+              <label for="boosterSel">Booster</label>
+              <select id="boosterSel"></select>
+            </div>
+            <div class="field">
+              <label for="sweetSel">Sweetener</label>
+              <select id="sweetSel"></select>
+            </div>
+
+            <div class="field" style="grid-column: 1 / -1;">
+              <label for="notes">Notes (allergies, substitutions, “no ice”, etc.)</label>
+              <textarea id="notes" placeholder="Example: dairy-free, no honey, extra ice"></textarea>
+            </div>
+          </div>
+
+          <div class="builderSummary">
+            <div class="main">
+              <b id="buildName">Custom Build</b>
+              <span id="buildDesc">Pick options to see your blend summary.</span>
+            </div>
+            <div class="right">
+              <b id="buildPrice">$0.00</b>
+              <span id="buildMacros">~ calories / protein</span>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap;">
+            <button class="btn primary" id="addBuildBtn">Add to Cart</button>
+            <button class="btn" id="nameBuildBtn">Name My Smoothie (AI-style)</button>
+          </div>
+
+          <div class="tiny" id="builderHint" style="margin-top:10px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAT -->
+    <button class="btn primary chatFab" id="chatFab">💬 AI Concierge</button>
+    <div class="chatPanel" id="chatPanel" aria-label="AI Concierge chat">
+      <div class="chatHeader">
+        <div>
+          <b>Smoothie Concierge</b>
+          <small>Grounded in menu + policies. Ask: “dairy-free high protein?”</small>
+        </div>
+        <button class="btn small" id="closeChatBtn">Close</button>
+      </div>
+
+      <div class="suggestRow" id="suggestRow"></div>
+      <div class="chatMsgs" id="chatMsgs"></div>
+
+      <div class="chatInput">
+        <input id="chatInput" type="text" placeholder="Ask about menu, allergies, hours, or recommendations..." />
+        <button class="btn small primary" id="sendChatBtn">Send</button>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footerGrid">
+        <div>
+          <div class="logo" style="margin-bottom:10px;">
+            <span class="mark" aria-hidden="true"></span><b>Smooth Vibes Smoothie Bar</b>
+          </div>
+          <div class="tiny">
+            Pilot site for a generative AI business course. Designed to be tested by a small stakeholder group and iterated with feedback.
+          </div>
+        </div>
+
+        <div>
+          <b>Hours (pilot)</b>
+          <div class="tiny" id="hoursText" style="margin-top:6px;"></div>
+          <div class="tiny" style="margin-top:8px;"><b>Pickup:</b> Ready in ~10–15 mins</div>
+        </div>
+
+        <div>
+          <b>Location (pilot)</b>
+          <div class="tiny" style="margin-top:6px;">Near campus • Fort Worth, TX</div>
+          <div class="tiny" style="margin-top:8px;">Contact: hello@smoothvibes.example</div>
+          <div class="tiny" style="margin-top:12px;">© <span id="year"></span> Smooth Vibes</div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /***********************
+     * PILOT MENU DATA
+     ***********************/
+    const STORE = {
+      hours: {
+        Mon: "8:00 AM – 7:00 PM",
+        Tue: "8:00 AM – 7:00 PM",
+        Wed: "8:00 AM – 7:00 PM",
+        Thu: "8:00 AM – 7:00 PM",
+        Fri: "8:00 AM – 6:00 PM",
+        Sat: "10:00 AM – 4:00 PM",
+        Sun: "Closed"
+      },
+      policies: [
+        "We can do dairy-free with almond milk or coconut water.",
+        "Allergen note: we use shared equipment; cross-contact is possible.",
+        "Pickup orders are prepared in ~10–15 minutes during pilot.",
+        "You can request substitutions; availability may vary."
+      ]
+    };
+
+    const MENU = [
+      {
+        id:"berry-bolt",
+        name:"Berry Bolt",
+        price: 8.49,
+        calories: 410,
+        protein: 24,
+        tags:["high-protein","berry","student-fav"],
+        allergens:["dairy"],
+        desc:"Strawberry + blueberry + banana with Greek yogurt and whey protein."
+      },
+      {
+        id:"tropical-tide",
+        name:"Tropical Tide",
+        price: 7.99,
+        calories: 380,
+        protein: 10,
+        tags:["tropical","dairy-free-option"],
+        allergens:[],
+        desc:"Mango + pineapple + orange with coconut water. (Add protein if you want.)"
+      },
+      {
+        id:"green-glow",
+        name:"Green Glow",
+        price: 8.29,
+        calories: 360,
+        protein: 18,
+        tags:["greens","low-sugar","dairy-free-option"],
+        allergens:[],
+        desc:"Spinach + banana + pineapple + chia with almond milk."
+      },
+      {
+        id:"pb-choco-crush",
+        name:"PB Choco Crush",
+        price: 8.79,
+        calories: 520,
+        protein: 28,
+        tags:["indulgent","high-protein"],
+        allergens:["peanuts","dairy"],
+        desc:"Peanut butter + cocoa + banana + oats with milk and whey."
+      },
+      {
+        id:"citrus-charge",
+        name:"Citrus Charge",
+        price: 7.69,
+        calories: 330,
+        protein: 8,
+        tags:["energy","low-cal","citrus","dairy-free"],
+        allergens:[],
+        desc:"Orange + pineapple + ginger + honey with coconut water."
+      },
+      {
+        id:"vanilla-cloud",
+        name:"Vanilla Cloud",
+        price: 7.89,
+        calories: 400,
+        protein: 16,
+        tags:["classic","kid-friendly","dairy-free-option"],
+        allergens:["dairy"],
+        desc:"Vanilla + banana + strawberry with yogurt. Swap almond milk for dairy-free."
+      },
+    ];
+
+    const FILTERS = [
+      { key:"high-protein", label:"💪 High protein" },
+      { key:"dairy-free", label:"🥛 Dairy-free" },
+      { key:"low-sugar", label:"🍃 Low sugar" },
+      { key:"tropical", label:"🌴 Tropical" },
+      { key:"greens", label:"🥬 Greens" },
+      { key:"indulgent", label:"🍫 Indulgent" }
+    ];
+
+    /***********************
+     * CART (localStorage)
+     ***********************/
+    const CART_KEY = "smoothvibes_cart_v1";
+
+    function loadCart(){
+      try{ return JSON.parse(localStorage.getItem(CART_KEY)) || []; }
+      catch{ return []; }
+    }
+    function saveCart(lines){
+      localStorage.setItem(CART_KEY, JSON.stringify(lines));
+    }
+    function addToCart(item){
+      const lines = loadCart();
+      const existing = lines.find(l => l.id === item.id && l.variant === (item.variant || "default"));
+      if(existing){ existing.qty += 1; }
+      else{ lines.push({ ...item, qty: 1, variant: item.variant || "default" }); }
+      saveCart(lines);
+      renderCart();
+      openCart();
+    }
+    function updateQty(id, variant, delta){
+      const lines = loadCart();
+      const line = lines.find(l => l.id === id && l.variant === variant);
+      if(!line) return;
+      line.qty += delta;
+      if(line.qty <= 0){
+        const idx = lines.findIndex(l => l.id === id && l.variant === variant);
+        lines.splice(idx,1);
+      }
+      saveCart(lines);
+      renderCart();
+    }
+    function clearCart(){
+      saveCart([]);
+      renderCart();
+    }
+    function formatMoney(n){ return `$${n.toFixed(2)}`; }
+
+    /***********************
+     * MENU RENDER
+     ***********************/
+    let activeFilters = new Set();
+
+    function applyFilters(items){
+      if(activeFilters.size === 0) return items;
+      return items.filter(it => {
+        // dairy-free filter is special: treat "dairy-free" or "dairy-free-option" tags
+        for(const f of activeFilters){
+          if(f === "dairy-free"){
+            if(!(it.tags.includes("dairy-free") || it.tags.includes("dairy-free-option"))) return false;
+          } else {
+            if(!it.tags.includes(f)) return false;
+          }
+        }
+        return true;
+      });
+    }
+
+    function renderFilters(){
+      const el = document.getElementById("filters");
+      el.innerHTML = "";
+      FILTERS.forEach(f => {
+        const btn = document.createElement("button");
+        btn.className = "chip";
+        btn.type = "button";
+        btn.setAttribute("aria-pressed", activeFilters.has(f.key) ? "true" : "false");
+        btn.textContent = f.label;
+        btn.onclick = () => {
+          if(activeFilters.has(f.key)) activeFilters.delete(f.key);
+          else activeFilters.add(f.key);
+          renderFilters();
+          renderMenu();
+        };
+        el.appendChild(btn);
+      });
+    }
+
+    function renderMenu(){
+      const grid = document.getElementById("menuGrid");
+      grid.innerHTML = "";
+      const list = applyFilters(MENU);
+      list.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "menuCard";
+        card.innerHTML = `
+          <div class="top">
+            <div>
+              <h3>${item.name}</h3>
+              <div class="tiny">~${item.calories} cal • ~${item.protein}g protein</div>
+            </div>
+            <div class="price">${formatMoney(item.price)}</div>
+          </div>
+          <div class="meta">${item.desc}</div>
+          <div class="tags">${item.tags.map(t => `<span class="tag">${t}</span>`).join("")}</div>
+          <div class="actions">
+            <button class="btn primary small">Add to Cart</button>
+            <button class="btn small">Ask Concierge</button>
+          </div>
+        `;
+        const [addBtn, askBtn] = card.querySelectorAll("button");
+        addBtn.onclick = () => addToCart({
+          id:item.id,
+          name:item.name,
+          desc:`${item.desc} • ~${item.calories} cal • ~${item.protein}g protein`,
+          price:item.price
+        });
+        askBtn.onclick = () => {
+          openChat();
+          pushUserMsg(`Tell me about "${item.name}" and suggest substitutions if needed.`);
+          respondToChat(`tell me about ${item.name}`); // grounded response
+        };
+        grid.appendChild(card);
+      });
+      // Stats
+      document.getElementById("statPopular").textContent = MENU[0]?.name || "—";
+      const avg = Math.round(MENU.reduce((a,b)=>a+b.calories,0) / MENU.length);
+      document.getElementById("statCalories").textContent = `~${avg}`;
+      document.getElementById("hoursText").innerHTML = Object.entries(STORE.hours)
+        .map(([d,h])=>`<div class="tiny"><b>${d}:</b> ${h}</div>`).join("");
+    }
+
+    /***********************
+     * CART UI
+     ***********************/
+    const drawer = document.getElementById("drawer");
+    const drawerBackdrop = document.getElementById("drawerBackdrop");
+
+    function openCart(){
+      drawer.classList.add("show");
+      drawerBackdrop.classList.add("show");
+      drawerBackdrop.setAttribute("aria-hidden","false");
+    }
+    function closeCart(){
+      drawer.classList.remove("show");
+      drawerBackdrop.classList.remove("show");
+      drawerBackdrop.setAttribute("aria-hidden","true");
+    }
+
+    function renderCart(){
+      const lines = loadCart();
+      const linesEl = document.getElementById("cartLines");
+      linesEl.innerHTML = "";
+      let total = 0;
+
+      lines.forEach(line => {
+        total += line.price * line.qty;
+        const row = document.createElement("div");
+        row.className = "line";
+        row.innerHTML = `
+          <div>
+            <div class="name">${line.name}</div>
+            <div class="desc">${line.desc || ""}</div>
+            <div class="qtyRow">
+              <button class="btn small qtyBtn" aria-label="decrease quantity">−</button>
+              <span class="kbd">${line.qty}</span>
+              <button class="btn small qtyBtn" aria-label="increase quantity">+</button>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <div class="price">${formatMoney(line.price)}</div>
+            <div class="tiny">${line.variant !== "default" ? line.variant : ""}</div>
+          </div>
+        `;
+        const [minusBtn, plusBtn] = row.querySelectorAll(".qtyBtn");
+        minusBtn.onclick = () => updateQty(line.id, line.variant, -1);
+        plusBtn.onclick = () => updateQty(line.id, line.variant, +1);
+        linesEl.appendChild(row);
+      });
+
+      document.getElementById("cartTotal").textContent = formatMoney(total);
+      document.getElementById("cartCount").textContent = String(lines.reduce((a,b)=>a+b.qty,0));
+    }
+
+    /***********************
+     * WHEEL (converts to cart)
+     ***********************/
+    const wheelCanvas = document.getElementById("wheelCanvas");
+    const ctx = wheelCanvas.getContext("2d");
+
+    // Wheel segments mapped to actual menu IDs
+    const WHEEL_SEGMENTS = [
+      { label:"Berry", picks:["berry-bolt","vanilla-cloud"] },
+      { label:"Tropical", picks:["tropical-tide","citrus-charge"] },
+      { label:"Greens", picks:["green-glow"] },
+      { label:"Indulgent", picks:["pb-choco-crush"] },
+      { label:"Low Sugar", picks:["green-glow","citrus-charge"] },
+      { label:"High Protein", picks:["berry-bolt","pb-choco-crush"] },
+    ];
+
+    function drawWheel(activeIndex = -1){
+      const w = wheelCanvas.width, h = wheelCanvas.height;
+      ctx.clearRect(0,0,w,h);
+
+      // background
+      const grd = ctx.createLinearGradient(0,0,w,h);
+      grd.addColorStop(0,"rgba(124,255,178,0.10)");
+      grd.addColorStop(1,"rgba(102,214,255,0.10)");
+      ctx.fillStyle = grd;
+      ctx.fillRect(0,0,w,h);
+
+      const cx = w*0.5, cy = h*0.52;
+      const r = Math.min(w,h)*0.38;
+      const seg = (Math.PI*2)/WHEEL_SEGMENTS.length;
+
+      for(let i=0;i<WHEEL_SEGMENTS.length;i++){
+        const start = -Math.PI/2 + i*seg;
+        const end = start + seg;
+
+        ctx.beginPath();
+        ctx.moveTo(cx,cy);
+        ctx.arc(cx,cy,r,start,end);
+        ctx.closePath();
+
+        const isActive = i === activeIndex;
+        ctx.fillStyle = isActive ? "rgba(124,255,178,0.22)" : "rgba(255,255,255,0.06)";
+        ctx.strokeStyle = "rgba(255,255,255,0.14)";
+        ctx.lineWidth = 2;
+        ctx.fill();
+        ctx.stroke();
+
+        // labels
+        ctx.save();
+        ctx.translate(cx,cy);
+        ctx.rotate(start + seg/2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "rgba(255,255,255,0.82)";
+        ctx.font = "700 22px system-ui";
+        ctx.fillText(WHEEL_SEGMENTS[i].label, r - 12, 8);
+        ctx.restore();
+      }
+
+      // pointer
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - r - 14);
+      ctx.lineTo(cx - 14, cy - r + 12);
+      ctx.lineTo(cx + 14, cy - r + 12);
+      ctx.closePath();
+      ctx.fillStyle = "rgba(255,209,102,0.90)";
+      ctx.fill();
+    }
+
+    let wheelPick = null;
+    let spinning = false;
+
+    function spinWheel(){
+      if(spinning) return;
+      spinning = true;
+      wheelPick = null;
+      document.getElementById("addWheelPickBtn").disabled = true;
+
+      const targetIndex = Math.floor(Math.random() * WHEEL_SEGMENTS.length);
+      const startTime = performance.now();
+      const duration = 1600 + Math.random()*600;
+
+      function tick(now){
+        const t = Math.min(1, (now - startTime)/duration);
+        // easeOutCubic
+        const eased = 1 - Math.pow(1 - t, 3);
+
+        // animate "active" index for visual
+        const idx = Math.floor((eased * (WHEEL_SEGMENTS.length*4 + targetIndex)) % WHEEL_SEGMENTS.length);
+        drawWheel(idx);
+
+        if(t < 1) requestAnimationFrame(tick);
+        else{
+          const seg = WHEEL_SEGMENTS[targetIndex];
+          const pickId = seg.picks[Math.floor(Math.random() * seg.picks.length)];
+          wheelPick = MENU.find(m => m.id === pickId) || MENU[0];
+
+          document.getElementById("wheelResult").textContent =
+            `✨ ${seg.label} vibe pick: ${wheelPick.name} — ${wheelPick.desc} (${formatMoney(wheelPick.price)})`;
+
+          document.getElementById("addWheelPickBtn").disabled = false;
+          spinning = false;
+          drawWheel(targetIndex);
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+
+    /***********************
+     * BUILDER (pilot)
+     ***********************/
+    const BUILDER = {
+      sizes: {
+        "12": { mult: 0.85 },
+        "16": { mult: 1.0 },
+        "24": { mult: 1.35 },
+      },
+      liquids: [
+        { id:"almond", label:"Almond Milk", price:0.40, cal:30, protein:1, tags:["dairy-free"] },
+        { id:"coconut", label:"Coconut Water", price:0.30, cal:25, protein:0, tags:["dairy-free"] },
+        { id:"milk", label:"2% Milk", price:0.35, cal:60, protein:3, tags:["dairy"] },
+        { id:"oat", label:"Oat Milk", price:0.45, cal:55, protein:2, tags:["dairy-free"] },
+      ],
+      fruits: [
+        { id:"berry", label:"Berry Mix", price:1.40, cal:90, protein:1, tags:["berry"] },
+        { id:"tropical", label:"Mango + Pineapple", price:1.45, cal:95, protein:1, tags:["tropical"] },
+        { id:"greens", label:"Spinach + Banana", price:1.30, cal:85, protein:2, tags:["greens"] },
+        { id:"choco", label:"Banana + Cocoa", price:1.55, cal:120, protein:2, tags:["indulgent"] },
+      ],
+      proteins: [
+        { id:"none", label:"No protein", price:0.00, cal:0, protein:0, tags:[] },
+        { id:"whey", label:"Whey (1 scoop)", price:1.75, cal:120, protein:24, tags:["high-protein","dairy"] },
+        { id:"pea", label:"Pea Protein (1 scoop)", price:1.75, cal:110, protein:22, tags:["high-protein","dairy-free"] },
+        { id:"greek", label:"Greek Yogurt", price:1.25, cal:90, protein:14, tags:["high-protein","dairy"] },
+      ],
+      boosters: [
+        { id:"none", label:"No booster", price:0.00, cal:0, protein:0, tags:[] },
+        { id:"chia", label:"Chia Seeds", price:0.80, cal:60, protein:2, tags:["fiber"] },
+        { id:"creatine", label:"Creatine (5g)", price:0.90, cal:0, protein:0, tags:["performance"] },
+        { id:"greens", label:"Greens Boost", price:0.85, cal:15, protein:1, tags:["greens"] },
+      ],
+      sweeteners: [
+        { id:"none", label:"No sweetener", price:0.00, cal:0, protein:0, tags:["low-sugar"] },
+        { id:"honey", label:"Honey", price:0.45, cal:45, protein:0, tags:[] },
+        { id:"dates", label:"Date Syrup", price:0.55, cal:55, protein:0, tags:[] },
+      ]
+    };
+
+    function fillSelect(id, options){
+      const sel = document.getElementById(id);
+      sel.innerHTML = "";
+      options.forEach(o => {
+        const opt = document.createElement("option");
+        opt.value = o.id;
+        opt.textContent = o.label;
+        sel.appendChild(opt);
+      });
+    }
+
+    function currentBuild(){
+      const size = document.getElementById("sizeSel").value;
+      const liquid = BUILDER.liquids.find(x => x.id === document.getElementById("liquidSel").value);
+      const fruit = BUILDER.fruits.find(x => x.id === document.getElementById("fruitSel").value);
+      const protein = BUILDER.proteins.find(x => x.id === document.getElementById("proteinSel").value);
+      const booster = BUILDER.boosters.find(x => x.id === document.getElementById("boosterSel").value);
+      const sweet = BUILDER.sweeteners.find(x => x.id === document.getElementById("sweetSel").value);
+      const notes = document.getElementById("notes").value.trim();
+      const mult = BUILDER.sizes[size].mult;
+
+      const basePrice = 5.99;
+      const parts = [liquid, fruit, protein, booster, sweet].filter(Boolean);
+
+      const price = (basePrice + parts.reduce((a,b)=>a+b.price,0)) * mult;
+      const cal = Math.round((parts.reduce((a,b)=>a+b.cal,0) + 240) * mult); // "240" base fruit blend estimate
+      const prot = Math.round((parts.reduce((a,b)=>a+b.protein,0) + 4) * mult);
+
+      const desc = `${size}oz • ${liquid.label} • ${fruit.label} • ${protein.label} • ${booster.label} • ${sweet.label}${notes ? ` • Notes: ${notes}` : ""}`;
+      return { size, liquid, fruit, protein, booster, sweet, notes, price, cal, prot, desc };
+    }
+
+    function updateBuilderSummary(customName){
+      const b = currentBuild();
+      const name = customName || buildAutoName(b);
+      document.getElementById("buildName").textContent = name;
+      document.getElementById("buildDesc").textContent = b.desc;
+      document.getElementById("buildPrice").textContent = formatMoney(b.price);
+      document.getElementById("buildMacros").textContent = `~${b.cal} cal • ~${b.prot}g protein`;
+      document.getElementById("builderHint").textContent =
+        "Pilot: This builder is deterministic + grounded. Next step: connect naming to a serverless GenAI endpoint for more creative names.";
+      return { ...b, name };
+    }
+
+    function buildAutoName(b){
+      const vibes = [];
+      if(b.protein.tags?.includes("high-protein") || b.protein.protein >= 20) vibes.push("Power");
+      if(b.fruit.tags?.includes("berry")) vibes.push("Berry");
+      if(b.fruit.tags?.includes("tropical")) vibes.push("Tropical");
+      if(b.fruit.tags?.includes("greens")) vibes.push("Green");
+      if(b.fruit.tags?.includes("indulgent")) vibes.push("Choco");
+      if(b.sweet.id === "none") vibes.push("Clean");
+      const left = vibes[0] || "Custom";
+      const right = vibes[1] || "Blend";
+      return `${left} ${right}`;
+    }
+
+    /***********************
+     * CHAT (grounded assistant)
+     ***********************/
+    const chatPanel = document.getElementById("chatPanel");
+    const chatMsgs = document.getElementById("chatMsgs");
+    const chatInput = document.getElementById("chatInput");
+
+    const SUGGESTIONS = [
+      "High protein, dairy-free",
+      "Low sugar options?",
+      "What has peanuts?",
+      "What are your hours?",
+      "Recommend something tropical"
+    ];
+
+    function openChat(){
+      chatPanel.classList.add("show");
+      chatInput.focus();
+    }
+    function closeChat(){
+      chatPanel.classList.remove("show");
+    }
+    function pushMsg(text, me=false){
+      const div = document.createElement("div");
+      div.className = "msg" + (me ? " me" : "");
+      div.textContent = text;
+      chatMsgs.appendChild(div);
+      chatMsgs.scrollTop = chatMsgs.scrollHeight;
+    }
+    function pushUserMsg(text){ pushMsg(text, true); }
+
+    function kbDocs(){
+      const menuDocs = MENU.map(m => ({
+        type:"menu",
+        id:m.id,
+        text:`${m.name}. ${m.desc}. Price ${m.price}. Calories ${m.calories}. Protein ${m.protein}. Tags: ${m.tags.join(", ")}. Allergens: ${(m.allergens||[]).join(", ")||"none"}.`
+      }));
+      const policyDoc = { type:"policy", id:"policies", text:`Policies: ${STORE.policies.join(" ")} Hours: ${Object.entries(STORE.hours).map(([d,h])=>`${d} ${h}`).join("; ")}.` };
+      return [policyDoc, ...menuDocs];
+    }
+
+    function tokenize(s){
+      return (s || "").toLowerCase()
+        .replace(/[^a-z0-9\s-]/g," ")
+        .split(/\s+/)
+        .filter(Boolean);
+    }
+
+    function retrieve(query, k=3){
+      const q = new Set(tokenize(query));
+      const docs = kbDocs().map(d => {
+        const tokens = tokenize(d.text);
+        let score = 0;
+        for(const t of tokens) if(q.has(t)) score++;
+        // boost for exact menu name mentions
+        if(d.type==="menu" && query.toLowerCase().includes(MENU.find(m=>m.id===d.id)?.name.toLowerCase() || "")) score += 8;
+        return { ...d, score };
+      });
+      docs.sort((a,b)=>b.score-a.score);
+      return docs.slice(0,k);
+    }
+
+    function recommendFromQuery(query){
+      const q = query.toLowerCase();
+      let candidates = MENU.slice();
+
+      if(q.includes("dairy-free") || q.includes("dairy free")){
+        candidates = candidates.filter(m => m.tags.includes("dairy-free") || m.tags.includes("dairy-free-option"));
+      }
+      if(q.includes("high protein") || q.includes("protein")){
+        candidates = candidates.filter(m => m.tags.includes("high-protein"));
+      }
+      if(q.includes("low sugar") || q.includes("low-sugar")){
+        candidates = candidates.filter(m => m.tags.includes("low-sugar"));
+      }
+      if(q.includes("tropical")) candidates = candidates.filter(m => m.tags.includes("tropical"));
+      if(q.includes("greens") || q.includes("green")) candidates = candidates.filter(m => m.tags.includes("greens"));
+      if(q.includes("chocolate") || q.includes("pb") || q.includes("indulgent")) candidates = candidates.filter(m => m.tags.includes("indulgent"));
+
+      if(candidates.length === 0) candidates = MENU.slice();
+      candidates.sort((a,b)=> (b.protein - a.protein) + (a.calories - b.calories)*0.002);
+      return candidates.slice(0,3);
+    }
+
+    function respondToChat(userText){
+      const docs = retrieve(userText, 3);
+      const recs = recommendFromQuery(userText);
+
+      // If user is asking hours/policies
+      const q = userText.toLowerCase();
+      if(q.includes("hours") || q.includes("open") || q.includes("close")){
+        const hours = Object.entries(STORE.hours).map(([d,h])=>`${d}: ${h}`).join("\n");
+        pushMsg(`Hours (pilot):\n${hours}\n\nPickup is usually ~10–15 minutes during pilot.`);
+        return;
+      }
+
+      if(q.includes("allerg") || q.includes("peanut") || q.includes("dairy")){
+        const peanut = MENU.filter(m => (m.allergens||[]).includes("peanuts")).map(m=>m.name);
+        const dairy = MENU.filter(m => (m.allergens||[]).includes("dairy")).map(m=>m.name);
+        pushMsg(
+          `Allergen note: shared equipment → cross-contact possible.\n\nPeanut items: ${peanut.length? peanut.join(", "):"none"}\nDairy items: ${dairy.length? dairy.join(", "):"none"}\n\nWant dairy-free? Ask “dairy-free high protein” and I’ll recommend options + swaps.`
+        );
+        return;
+      }
+
+      const topInfo = docs.map(d => `• ${d.text}`).join("\n").slice(0, 900);
+      const recText = recs.map(r => `- ${r.name} (${formatMoney(r.price)} • ~${r.calories} cal • ~${r.protein}g protein)`).join("\n");
+
+      pushMsg(
+        `Here’s what I can recommend based on our current menu:\n${recText}\n\nWhy these fit:\n${topInfo}\n\nWant me to tailor it? Tell me: goal (energy/protein/low sugar), dairy-free yes/no, and taste (berry/tropical/greens/choco).`
+      );
+    }
+
+    function initChat(){
+      const row = document.getElementById("suggestRow");
+      row.innerHTML = "";
+      SUGGESTIONS.forEach(s => {
+        const b = document.createElement("button");
+        b.className = "suggest";
+        b.type = "button";
+        b.textContent = s;
+        b.onclick = () => {
+          openChat();
+          pushUserMsg(s);
+          respondToChat(s);
+        };
+        row.appendChild(b);
+      });
+      // welcome
+      pushMsg("Hey! I’m your Smooth Vibes Concierge. Tell me your goal + dietary needs and I’ll recommend a real menu item you can add to cart.");
+    }
+
+    /***********************
+     * CHECKOUT (pilot)
+     ***********************/
+    function pilotCheckout(){
+      const lines = loadCart();
+      if(lines.length === 0){
+        alert("Your cart is empty. Add a smoothie first 🙂");
+        return;
+      }
+      const pickup = prompt("Pilot checkout: What pickup time do you want? (Example: 12:30pm)");
+      if(!pickup) return;
+      const notes = prompt("Any pickup notes? (optional)") || "";
+      const total = lines.reduce((a,b)=>a + b.price*b.qty, 0);
+
+      const summary =
+        lines.map(l => `${l.qty}x ${l.name} (${formatMoney(l.price)})`).join("\n") +
+        `\n\nPickup time: ${pickup}\nNotes: ${notes}\nEstimated total: ${formatMoney(total)}\n\n(For production: this would confirm via email/text and take payment.)`;
+
+      alert("Order submitted (pilot)!\n\n" + summary);
+      clearCart();
+    }
+
+    /***********************
+     * EMAIL SIGNUP (pilot)
+     ***********************/
+    function handleEmailSignup(){
+      const email = document.getElementById("emailSignup").value.trim();
+      const msg = document.getElementById("emailMsg");
+      if(!email || !email.includes("@")){
+        msg.style.color = "rgba(255,92,122,0.85)";
+        msg.textContent = "Please enter a valid email.";
+        return;
+      }
+      msg.style.color = "rgba(124,255,178,0.85)";
+      msg.textContent = "You’re on the list! (Pilot: this saves locally — connect to a form backend for production.)";
+      // Pilot local save
+      localStorage.setItem("smoothvibes_email_pilot", email);
+    }
+
+    /***********************
+     * EVENTS / INIT
+     ***********************/
+    function openBuilder(){ document.getElementById("builderBackdrop").classList.add("show"); updateBuilderSummary(); }
+    function closeBuilder(){ document.getElementById("builderBackdrop").classList.remove("show"); }
+
+    function initBuilder(){
+      fillSelect("liquidSel", BUILDER.liquids);
+      fillSelect("fruitSel", BUILDER.fruits);
+      fillSelect("proteinSel", BUILDER.proteins);
+      fillSelect("boosterSel", BUILDER.boosters);
+      fillSelect("sweetSel", BUILDER.sweeteners);
+
+      ["sizeSel","liquidSel","fruitSel","proteinSel","boosterSel","sweetSel","notes"].forEach(id => {
+        document.getElementById(id).addEventListener("input", () => updateBuilderSummary());
+      });
+
+      document.getElementById("nameBuildBtn").onclick = () => {
+        const b = currentBuild();
+        // “AI-style” deterministic naming with a bit of randomness (no external API)
+        const adj = ["Electric","Sunset","Clean","Midnight","Radiant","Campus","Turbo","Zen"];
+        const noun = ["Wave","Boost","Blend","Glow","Bolt","Breeze","Rush","Vibe"];
+        const name = `${adj[Math.floor(Math.random()*adj.length)]} ${noun[Math.floor(Math.random()*noun.length)]}`;
+        updateBuilderSummary(name);
+      };
+
+      document.getElementById("addBuildBtn").onclick = () => {
+        const b = updateBuilderSummary();
+        addToCart({
+          id: "custom-build",
+          variant: `${b.size}oz`,
+          name: b.name,
+          desc: `${b.desc} • ~${b.cal} cal • ~${b.prot}g protein`,
+          price: Number(b.price.toFixed(2))
+        });
+        closeBuilder();
+      };
+    }
+
+    function init(){
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      // Buttons
+      document.getElementById("openCartBtn").onclick = openCart;
+      document.getElementById("closeCartBtn").onclick = closeCart;
+      drawerBackdrop.onclick = closeCart;
+      document.getElementById("clearCartBtn").onclick = () => { if(confirm("Clear cart?")) clearCart(); };
+      document.getElementById("checkoutBtn").onclick = pilotCheckout;
+
+      document.getElementById("openBuilderBtn").onclick = openBuilder;
+      document.getElementById("openBuilderBtn2").onclick = openBuilder;
+      document.getElementById("closeBuilderBtn").onclick = closeBuilder;
+      document.getElementById("builderBackdrop").addEventListener("click", (e) => {
+        if(e.target.id === "builderBackdrop") closeBuilder();
+      });
+
+      // Email
+      document.getElementById("emailBtn").onclick = handleEmailSignup;
+
+      // Chat
+      document.getElementById("chatFab").onclick = openChat;
+      document.getElementById("openChatBtn").onclick = openChat;
+      document.getElementById("openChatBtn2").onclick = openChat;
+      document.getElementById("openChatBtn3").onclick = openChat;
+      document.getElementById("closeChatBtn").onclick = closeChat;
+      document.getElementById("sendChatBtn").onclick = () => {
+        const t = chatInput.value.trim();
+        if(!t) return;
+        chatInput.value = "";
+        pushUserMsg(t);
+        respondToChat(t);
+      };
+      chatInput.addEventListener("keydown", (e) => {
+        if(e.key === "Enter"){
+          document.getElementById("sendChatBtn").click();
+        }
+      });
+
+      document.getElementById("conciergeDemoBtn").onclick = () => {
+        openChat();
+        const q = "High protein, dairy-free";
+        pushUserMsg(q);
+        respondToChat(q);
+      };
+
+      // Wheel
+      drawWheel();
+      document.getElementById("spinBtn").onclick = spinWheel;
+      document.getElementById("spinAgainBtn").onclick = spinWheel;
+      document.getElementById("spinAndRecommendBtn").onclick = () => {
+        spinWheel();
+        setTimeout(() => openChat(), 700);
+      };
+      document.getElementById("addWheelPickBtn").onclick = () => {
+        if(!wheelPick) return;
+        addToCart({ id: wheelPick.id, name: wheelPick.name, desc: `${wheelPick.desc} • ~${wheelPick.calories} cal • ~${wheelPick.protein}g protein`, price: wheelPick.price });
+      };
+
+      // Keyboard shortcuts
+      window.addEventListener("keydown", (e) => {
+        if(e.target && ["INPUT","TEXTAREA","SELECT"].includes(e.target.tagName)) return;
+        if(e.key.toLowerCase() === "k") openCart();
+        if(e.key.toLowerCase() === "c") openChat();
+      });
+
+      // Render
+      renderFilters();
+      renderMenu();
+      renderCart();
+      initChat();
+      initBuilder();
+    }
+
+    window.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>
