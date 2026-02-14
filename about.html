@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Our Story — Smooth Vibes</title>
+  <meta name="description" content="Smooth Vibes Smoothie Bar — our story, values, and how our pilot-ready AI concierge works."/>
+  <style>
+    :root{
+      --bg: #070A0F;
+      --panel: rgba(255,255,255,0.06);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.68);
+      --muted2: rgba(255,255,255,0.52);
+      --border: rgba(255,255,255,0.14);
+      --brand: #7CFFB2;
+      --brand2:#66D6FF;
+      --shadow: 0 20px 60px rgba(0,0,0,0.55);
+      --radius: 22px;
+      --max: 980px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1100px 800px at 15% -10%, rgba(124,255,178,0.10), transparent 55%),
+        radial-gradient(900px 700px at 115% 20%, rgba(102,214,255,0.12), transparent 55%),
+        var(--bg);
+    }
+    a{ color:inherit; text-decoration:none; }
+    .container{ width:min(var(--max), calc(100% - 40px)); margin:0 auto; }
+    header{
+      position:sticky; top:0; z-index:20;
+      background: rgba(7,10,15,0.62);
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(16px);
+    }
+    .nav{
+      display:flex; align-items:center; justify-content:space-between; gap:14px;
+      padding:14px 0;
+    }
+    .logo{ display:flex; align-items:center; gap:12px; font-weight:900; }
+    .mark{
+      width:34px; height:34px; border-radius: 12px;
+      background: radial-gradient(circle at 30% 30%, rgba(124,255,178,0.9), rgba(102,214,255,0.5));
+      box-shadow: 0 10px 25px rgba(124,255,178,0.15);
+    }
+    .btn{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      padding:12px 14px;
+      border-radius: 14px;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      cursor:pointer;
+      transition: transform .15s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,0.24); background: rgba(255,255,255,0.09); }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(124,255,178,0.22), rgba(102,214,255,0.18));
+      border-color: rgba(124,255,178,0.35);
+    }
+    .hero{
+      padding: 34px 0 16px;
+    }
+    h1{
+      margin: 0 0 10px;
+      font-size: clamp(28px, 3vw, 40px);
+      letter-spacing: -0.6px;
+      line-height:1.08;
+    }
+    .sub{
+      margin:0;
+      color: var(--muted);
+      line-height:1.5;
+      max-width: 70ch;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 14px;
+      margin-top: 18px;
+      align-items:start;
+    }
+    @media (max-width: 900px){ .grid{ grid-template-columns: 1fr; } }
+    .card{
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+    .card h2{ margin:0 0 10px; font-size: 18px; letter-spacing:-0.2px; }
+    .card p{ margin:0 0 10px; color: var(--muted); line-height:1.5; }
+    .list{ margin: 10px 0 0; padding-left: 18px; color: var(--muted); line-height:1.55; }
+    .pill{
+      display:inline-flex; align-items:center; gap:10px;
+      border:1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.05);
+      padding:10px 12px;
+      border-radius:999px;
+      color: rgba(255,255,255,0.75);
+      font-size: 13px;
+    }
+    .mono{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: rgba(255,255,255,0.72);
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.25);
+      padding: 10px 12px;
+      border-radius: 16px;
+      line-height:1.45;
+      white-space: pre-wrap;
+    }
+    footer{
+      margin-top: 18px;
+      padding: 22px 0 34px;
+      border-top:1px solid rgba(255,255,255,0.10);
+      color: var(--muted);
+    }
+    .tiny{ font-size: 12px; color: var(--muted2); line-height:1.4; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="nav">
+        <a class="logo" href="./">
+          <span class="mark" aria-hidden="true"></span>
+          <span>Smooth Vibes</span>
+        </a>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <a class="btn" href="./#menu">Menu</a>
+          <a class="btn" href="./#wheel">Flavor Wheel</a>
+          <a class="btn primary" href="./">Order Pickup</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="hero">
+    <div class="container">
+      <span class="pill">Pilot-ready GenAI solution • fast pickup • grounded recommendations</span>
+      <h1>Our Story</h1>
+      <p class="sub">
+        Smooth Vibes was built for students who want something fast, healthy, and customizable —
+        without guessing what fits their goals. Our pilot adds an AI Concierge that recommends
+        real menu items based on dietary needs and preferences.
+      </p>
+
+      <div class="grid">
+        <div class="card">
+          <h2>What we’re building</h2>
+          <p>
+            A smoothie shop website that feels like a real product: menu → cart → checkout (pilot),
+            plus decision support through a grounded AI assistant.
+          </p>
+          <ul class="list">
+            <li><b>Speed:</b> pickup-first ordering flow designed to reduce lines.</li>
+            <li><b>Clarity:</b> dietary tags and allergen-aware recommendations.</li>
+            <li><b>Customization:</b> a builder that outputs a clean, readable order summary.</li>
+            <li><b>Trust:</b> the concierge uses our menu + policies (not made-up info).</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h2>Who it’s for (target users)</h2>
+          <ul class="list">
+            <li>Students who want <b>high-protein</b> or <b>low-sugar</b> choices quickly.</li>
+            <li>Customers with <b>dairy-free</b> needs who want safe substitutions.</li>
+            <li>Anyone who wants “tell me what to order” guidance without scrolling.</li>
+          </ul>
+          <p class="tiny" style="margin-top:10px;">
+            Pilot success metric: % of visitors who use Concierge → add to cart → submit checkout.
+          </p>
+        </div>
+      </div>
+
+      <div class="grid" style="margin-top:14px;">
+        <div class="card">
+          <h2>Why GenAI belongs here</h2>
+          <p>
+            The “menu decision” problem is real: people have different goals (energy, protein,
+            low-sugar), allergies, and taste preferences. A plain menu makes users do the work.
+          </p>
+          <ul class="list">
+            <li>AI turns vague intent (“not too sweet, dairy-free”) into a concrete order.</li>
+            <li>It reduces friction and increases conversion in a pickup-first business.</li>
+            <li>It can adapt responses to each user, while staying grounded in store data.</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h2>How the AI stays grounded</h2>
+          <p>
+            In the pilot, the Concierge is built on a structured knowledge base:
+            menu items, tags, allergens, and store policies.
+          </p>
+          <div class="mono">Knowledge Base (pilot)
+- menu items (name, price, calories, protein, tags, allergens)
+- store hours + pickup policy
+- substitution rules + cross-contact disclaimer
+
+Retrieval (pilot)
+- keyword overlap + tag matching
+- recommendations filtered to real menu items
+
+Production path
+- connect UI to serverless GenAI endpoint + vector search (RAG)
+- log feedback + improve prompts + update knowledge base</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <h2>Pilot plan (stakeholder readiness)</h2>
+        <ul class="list">
+          <li><b>Stakeholders:</b> 10–20 students testing ordering flow + Concierge helpfulness.</li>
+          <li><b>What we measure:</b> chat usage, add-to-cart rate, checkout completion, feedback scores.</li>
+          <li><b>Iteration loop:</b> update menu/policies → refine prompts/retrieval → re-test weekly.</li>
+        </ul>
+        <div class="tiny" style="margin-top:10px;">
+          Next: add analytics + a feedback form and connect the concierge to a real GenAI endpoint.
+        </div>
+      </div>
+
+      <footer>
+        <div class="container">
+          <div class="tiny">
+            © <span id="year"></span> Smooth Vibes • Built for a Generative AI business capstone pilot.
+          </div>
+        </div>
+      </footer>
+    </div>
+  </main>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
